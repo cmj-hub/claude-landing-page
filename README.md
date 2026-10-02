@@ -1,4 +1,6 @@
-# The page
+# Landing page
+
+A landing page is one page, one offer, and one action.
 
 You hold one URL, one offer, and one action. The scorer refuses a sitemap.
 
@@ -11,7 +13,7 @@ Give the instrument. Sell the compounding.
 ## Install
 
 ```bash
-npx skills add cmj-hub/claude-page --all -g --full-depth
+npx skills add cmj-hub/claude-landing-page --all -g --full-depth
 ```
 
 Works in Claude Code, Cursor, Codex, Grok, Copilot, Windsurf, Cline, OpenCode, and the rest of the skills CLI list.
