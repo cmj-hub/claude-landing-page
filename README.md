@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/header.png" alt="Landing page skill for Claude Code" width="100%">
+</p>
+
 # Landing page skill for Claude Code
 
 **A landing page is one page, one offer, and one action.**
@@ -7,6 +11,10 @@ You hold one URL, one offer, and one action. The scorer refuses a sitemap.
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/claude-code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![No paid APIs](https://img.shields.io/badge/paid%20APIs-none-success)
+
+<p align="center">
+  <img src="./assets/demo.gif" alt="Landing page skill — one page passes, a sitemap fails" width="100%">
+</p>
 
 The build guide teaches a human. This pack teaches an agent.
 
