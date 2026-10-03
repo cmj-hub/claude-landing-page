@@ -38,7 +38,7 @@ Go back to step 2 if step 3 fails.
 
 ## Run
 
-```bash
+```
 python3 scripts/score.py --file examples/page-good.json
 python3 scripts/score.py --file examples/page-sitemap.json
 ```
@@ -49,7 +49,7 @@ The JSON object has three strings: `url`, `offer`, and `action`. A broken JSON e
 
 Python 3 standard library only. No network. No publish.
 
-## Shell
+## Example draft
 
 ```json
 {

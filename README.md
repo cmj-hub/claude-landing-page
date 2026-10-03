@@ -18,23 +18,15 @@ The build guide teaches a human. The pack teaches an agent.
 
 ## Install
 
-```bash
-npx skills add cmj-hub/claude-landing-page --all -g --full-depth
-```
+This pack is the files in this repository. Open the tree on the host you already run. There is no remote installer.
 
-`--all` writes this pack for every host the installer knows. One host:
-
-```bash
-npx skills add cmj-hub/claude-landing-page --skill '*' -g --full-depth -y -a claude-code
-```
-
-Swap `claude-code` for `cursor`, `codex`, `grok`, `github-copilot`, `windsurf`, `cline`, or `opencode`. The scorer is Python in this repo. It does not call a paid API.
+The scorer is Python in this repo.
 
 ## What you walk out with in 15 minutes
 
 Artifact: `examples/page-good.json`.
 
-```bash
+```
 python3 scripts/score.py --file examples/page-good.json
 python3 scripts/score.py --file examples/page-sitemap.json
 ```
