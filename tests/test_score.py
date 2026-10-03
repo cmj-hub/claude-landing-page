@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CELL = "super-secret-cell"
+CELL = "incomplete-json-probe"
 
 
 def run(args, stdin=None):
