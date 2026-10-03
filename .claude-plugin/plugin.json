@@ -1,6 +1,6 @@
 {
   "name": "landing-page",
-  "icon": "icon.png",
+  "icon": ".claude-plugin/icon.png",
   "version": "0.3.0",
   "description": "A landing page is one page, one offer, and one action.",
   "author": {
