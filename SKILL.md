@@ -1,9 +1,10 @@
 ---
 name: page
-description: "Draft one landing page as one https URL, one offer, and one action, then score it. Use when someone asks for a landing page, a single-offer page, or a page with one call to action. Refuses a sitemap or a list of pages."
+description: "Draft one landing page as one https URL, one offer, and one action, then score it. Use when someone asks for a landing page, a single-offer page, or a page with one call to action. Refuses a sitemap or a list of pages. Not for writing the value line (use evp), setting price tiers (use pricing), or the emails after opt-in (use email-sequence)."
 when_to_use: "Trigger on: landing page, one-page offer, squeeze page, sign-up page, page with one CTA, score my landing page draft. Do not use for a site map, site navigation, a multi-page site, or publishing."
 argument-hint: "[what the page offers]"
 license: MIT
+models: ""
 ---
 
 # The page
@@ -25,6 +26,15 @@ The build guide teaches a human. This pack teaches an agent.
 - Action. Start with a verb the reader does: book, reply, start, download, read. One verb phrase. "Book a call or download the guide" is two actions. Pick one.
 
 If the user brings two offers, ask which one this page carries. The other one gets its own page.
+
+## From brand-config.json
+
+If `brand-config.json` sits at the project root, read it before drafting. Read only. This pack writes nothing to it.
+
+- `evp.primary` is the offer line. Use it, or cut it to one sentence. `evp.outcome` and `evp.proof` back it up on the page.
+- `pricing.currentTiers` names the tiers. The page sells one tier; ask which. The action matches it: start a trial, book a call, buy. `pricing.referenceAnchor.quantified` is the price frame, if the page shows a price.
+
+If a block is missing, say which pack makes it and ask the user for the line. Do not invent an offer or a price. `evp` comes from `/plugin install evp@gtm-operator-skills`; `pricing` comes from `/plugin install pricing@gtm-operator-skills`.
 
 ## Checklist
 
@@ -61,6 +71,17 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples
 Add `--json` to get one JSON object with `pass`, `sitemap`, `problems`, and the three fields.
 
 Python 3 standard library only. No network. No publish.
+
+## Works with the suite
+
+This is step 7 of the GTM operator suite (`/plugin marketplace add cmj-hub/gtm-operator-skills`).
+
+- **Reads:** `evp` and `pricing` from `brand-config.json`, if present.
+- **Writes:** nothing outside the draft. It never touches another pack's keys.
+- **Before this:** evp (`/evp:evp`) when there is no offer line; pricing (`/pricing:pricing`) when the page sells a tier.
+- **After this:** email-sequence (`/email-sequence:lifecycle-email`) once someone opts in; geo (`/geo:geo`) when the page must be quoted by an answer engine.
+
+If a companion pack is not installed, name it and its install line (`/plugin install <name>@gtm-operator-skills`); do not do its job inline.
 
 ## Example draft
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 — 2026-10-04
+
+- `plugin.json` lists `"skills": ["./"]` so the root skill loads explicitly.
+- `SKILL.md` adds `models: ""`, a not-for clause, and reads `evp` and
+  `pricing` from `brand-config.json` when present; never invents them.
+- "Works with the suite" section: step 7, hands off to email-sequence
+  and geo.
+- README adds the suite marketplace and `npx skills add` install lines.
+- Manifest: author URL, keywords, `gtm`.
+
 ## 0.4.0
 
 - Scorer checks what the docs promise: one https URL with a host, one
