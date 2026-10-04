@@ -20,7 +20,13 @@ The build guide teaches a human. The pack teaches an agent.
 
 This pack is the files in this repository. Open the tree on the host you already run. There is no remote installer.
 
-The scorer is Python in this repo.
+The scorer is Python in this repo. The skill calls it from its own folder, so it runs wherever the pack lands.
+
+Run the tests:
+
+```
+python3 -m unittest discover -s tests
+```
 
 ## What you walk out with in 15 minutes
 
@@ -31,7 +37,26 @@ python3 scripts/score.py --file examples/page-good.json
 python3 scripts/score.py --file examples/page-sitemap.json
 ```
 
-The good draft exits 0 and prints the URL, the offer, and the action. The sitemap draft exits 1. Then drop in yours.
+```
+python3 scripts/score.py --file examples/page-two-offers.json
+```
+
+The good draft exits 0 and prints the URL, the offer, and the action. The sitemap draft exits 1. The two-offer draft exits 1 and names the problem:
+
+```
+draft fails
+- offer is more than one sentence
+```
+
+Then drop in yours. Every problem is listed at once, so one pass shows every fix. Add `--json` for machine-readable output.
+
+## What the score checks
+
+- `url` is one https address with a host. A list, two addresses, or a path that says sitemap fails.
+- `offer` is one sentence, 200 characters or less. A list or an `offers` key fails.
+- `action` is one sentence, 160 characters or less. A list, an `actions` key, or a `ctas` key fails.
+
+Exit 0 passes. Exit 1 fails. Exit 2 means the input is unusable.
 
 ## What this pack will not do
 
@@ -39,7 +64,7 @@ It will not publish the page. It does not emit a sitemap. It will not list every
 
 ## What belongs on a landing page?
 
-One page, one offer, and one action. A second offer, or a list of every URL on the site, fails the score.
+One page, one offer, and one action. A second offer, a second action, or a list of every URL on the site fails the score.
 
 ## Does this publish the page?
 

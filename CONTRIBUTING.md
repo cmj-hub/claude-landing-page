@@ -6,26 +6,21 @@ before you contribute.
 ## What kinds of contributions land
 
 - **Bug reports** — open an issue with a reproducible case. The
-  scripts in `scripts/` are deterministic, so bugs there are usually
+  scorer in `scripts/` is deterministic, so bugs there are usually
   one-line fixes.
-- **New sub-skills** that extend the existing framework. Discuss in
-  an issue first if it's a substantial addition.
-- **Calibration improvements** to the scoring scripts — if you can
-  show a case where the script scores wrong, that's gold.
-- **Cross-runtime ports** (Cursor, Gemini CLI, Codex) — see the
-  `Cross-runtime` section of the README.
-- **Translation** of the framework reference docs.
+- **Scoring cases** — a draft the scorer passes that should fail, or
+  fails that should pass. Add it as a test in `tests/test_score.py`.
+- **Wording** in `SKILL.md` that helps an agent write a tighter offer
+  or action.
 
 ## What doesn't land
 
-- Renaming the JMC framework concepts (Signal → Pain → EVP → Ask, the
-  5 Schwartz tiers, the 4 content pillars) — these are course-anchored.
-- Adding LLM calls inside the skills. The whole point is that the
-  skills are deterministic.
+- A second offer, a second action, or a sitemap mode. The pack is one
+  page, one offer, one action.
+- Adding LLM calls inside the skill. The scorer is deterministic.
 - Adding third-party packages to scripts. Scripts must work with the
   Python standard library only.
-- Renaming `claude-*` → `<other-runtime>-*`. We ship per-runtime ports
-  as separate plugins instead.
+- Network calls or publishing. The pack scores a draft. You publish it.
 
 ## Development setup
 
@@ -33,29 +28,27 @@ before you contribute.
 git clone https://github.com/cmj-hub/claude-landing-page.git
 cd claude-landing-page
 python3 scripts/score.py --help
+python3 -m unittest discover -s tests
 ```
 
 ## Pull-request checklist
 
-- [ ] Skill names follow the spec (lowercase, hyphens, ≤64 chars,
-      directory matches `name:` in frontmatter)
-- [ ] Sub-skill descriptions include trigger phrases inline
-- [ ] If you touch a script, smoke-test it and paste output in the PR
-- [ ] If you add a new sub-skill, list it in the README catalog table
-- [ ] CHANGELOG.md updated
+- [ ] `python3 -m unittest discover -s tests` passes
+- [ ] If you touch the scorer, add a test and paste the output for the
+      three files in `examples/` in the PR
+- [ ] If you change what the scorer checks, update the table in
+      `SKILL.md` and the list in `README.md`
+- [ ] `CHANGELOG.md` updated and `version` bumped in
+      `.claude-plugin/plugin.json`
 - [ ] No new dependencies (pip packages or npm packages)
 
-## Reporting calibration issues with scoring scripts
+## Reporting a wrong score
 
-If `scripts/score.py` scores something obviously wrong:
+If `scripts/score.py` scores a draft wrong:
 
-1. Paste the input that produced the wrong score
-2. State your expected score + actual score
-3. Note which axis is mis-calibrated
-
-The scripts are calibrated against ~1,000 real B2B campaigns. New
-calibration cases add to the lexicons in version-controlled JSON, not
-to the script logic — keep the deterministic path stable.
+1. Paste the draft JSON that produced the wrong result
+2. State the result you expected and the result you got
+3. Name the field: `url`, `offer`, or `action`
 
 ## License
 
