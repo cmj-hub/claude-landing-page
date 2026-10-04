@@ -31,7 +31,7 @@ python3 scripts/score.py --file examples/page-good.json
 python3 scripts/score.py --file examples/page-sitemap.json
 ```
 
-The good draft exits 0 and prints the URL, the offer, and the action. The sitemap draft exits 1. Then drop in yours.
+The good draft exits 0 and prints the URL, the headline, the section order, the proof, the offer, and the action. The sitemap draft exits 1. Then drop in yours.
 
 ## What this pack will not do
 
@@ -39,7 +39,7 @@ It will not publish the page. It does not emit a sitemap. It will not list every
 
 ## What belongs on a landing page?
 
-One page, one offer, and one action. A second offer, or a list of every URL on the site, fails the score.
+One address, then the page in this order: headline, proof, offer, action. A second offer, or a list of every URL on the site, fails the score.
 
 ## Does this publish the page?
 

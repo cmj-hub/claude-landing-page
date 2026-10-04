@@ -1,5 +1,8 @@
 {
   "url": "https://example.com/desk",
+  "headline": "A one-page desk that names the week's leak.",
+  "section_order": "headline, proof, offer, action",
+  "proof": "Example, replace this: the page shows 1 leak before it asks for anything.",
   "offer": "A one-page desk that names the week's leak.",
   "action": "Read the page and reply with the one number you want next."
 }
