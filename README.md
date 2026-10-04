@@ -18,7 +18,22 @@ The build guide teaches a human. The pack teaches an agent.
 
 ## Install
 
-This pack is the files in this repository. Open the tree on the host you already run. There is no remote installer.
+In Claude Code, install it from the suite marketplace:
+
+```
+/plugin marketplace add cmj-hub/gtm-operator-skills
+/plugin install landing-page@gtm-operator-skills
+```
+
+The plugin is `landing-page`. Its one skill is `page`, so the command is `/landing-page:page`.
+
+Other agents (Codex, Cursor, and the rest) can install it with the skills CLI:
+
+```
+npx skills add cmj-hub/claude-landing-page --all -g --full-depth
+```
+
+Or clone the repository and open the tree on the host you already run.
 
 The scorer is Python in this repo. The skill calls it from its own folder, so it runs wherever the pack lands.
 

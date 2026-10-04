@@ -1,13 +1,24 @@
 {
   "name": "landing-page",
-  "icon": ".claude-plugin/icon.png",
-  "version": "0.4.0",
-  "description": "A landing page is one page, one offer, and one action. Drafts the page and scores it; refuses a sitemap.",
+  "version": "0.5.0",
+  "description": "Draft one landing page as one URL, one offer, and one action, then score it. Use when someone asks for a landing page or a single-offer page. Refuses a sitemap.",
   "author": {
-    "name": "Jay Mount Consulting"
+    "name": "Jay Mount Consulting",
+    "url": "https://jaymountconsulting.com"
   },
-  "license": "MIT",
   "homepage": "https://jaymountconsulting.com/skills",
   "repository": "https://github.com/cmj-hub/claude-landing-page",
-  "keywords": ["landing-page", "offer", "cta", "conversion", "marketing"]
+  "license": "MIT",
+  "keywords": [
+    "landing-page",
+    "offer",
+    "cta",
+    "conversion",
+    "marketing",
+    "gtm"
+  ],
+  "icon": ".claude-plugin/icon.png",
+  "skills": [
+    "./"
+  ]
 }
