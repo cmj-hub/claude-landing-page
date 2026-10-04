@@ -2,9 +2,9 @@
 name: page
 description: "Draft one landing page as one https URL, one offer, and one action, then score it. Use when someone asks for a landing page, a single-offer page, or a page with one call to action. Refuses a sitemap or a list of pages. Not for writing the value line (use evp), setting price tiers (use pricing), or the emails after opt-in (use email-sequence)."
 when_to_use: "Trigger on: landing page, one-page offer, squeeze page, sign-up page, page with one CTA, score my landing page draft. Do not use for a site map, site navigation, a multi-page site, or publishing."
-argument-hint: "[what the page offers]"
+argument-hint: "[what the page offers | score]"
 license: MIT
-allowed-tools: Read Write Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/score.py:*)
+allowed-tools: Read Write Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py:*)
 models: ""
 ---
 
@@ -13,6 +13,10 @@ models: ""
 A page is one address. It states one offer. It asks for one action. A sitemap is a list of addresses. This pack refuses that list.
 
 The build guide teaches a human. This pack teaches an agent.
+
+## Start
+
+If `$ARGUMENTS` is `score`, run the scorer on `gtm/page.json` and report each line. Otherwise `$ARGUMENTS` is what the page offers, or empty; draft the page with the checklist below. The draft lives at `gtm/page.json`; create `gtm/` if missing.
 
 ## The three parts
 
@@ -47,11 +51,11 @@ If a block is missing, say which pack makes it and ask the user for the line. Do
 Copy this list and tick it in order.
 
 - [ ] 1. Name the one URL.
-- [ ] 2. Write the draft to `draft.json`: `url`, `offer`, `action`, and `headline` / `proof` when you have them.
-- [ ] 3. Run `python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file draft.json`.
-- [ ] 4. Read each `- problem` line. Fix that field. Go back to step 3.
+- [ ] 2. Write the draft to `gtm/page.json` (create `gtm/` if missing): `url`, `offer`, `action`, and `headline` / `proof` when you have them.
+- [ ] 3. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py --file gtm/page.json`.
+- [ ] 4. Read each `- problem → fix` line. Make that change. Go back to step 3.
 
-Stop when the script exits 0. Show the user the three printed lines.
+Stop when the script exits 0. Show the user the printed lines and the `Next:` line.
 
 ## What the scorer refuses
 
@@ -67,19 +71,19 @@ Stop when the script exits 0. Show the user the three printed lines.
 | `headline does not name the offer` | No word longer than three letters is shared with the offer | Name the offer's noun or result in the headline. |
 | `proof is empty` / `proof is more than one line` | The proof is blank or spills over a line | One line, or drop the field. |
 
-Exit 0 means the page passes. Exit 1 means it fails and each problem is listed. Exit 2 means the input is unusable: no file, not UTF-8, broken JSON, or not an object. A broken JSON does not echo the raw input.
+Exit 0 means the page passes; the last line is `Next: /email-sequence:lifecycle-email`. Exit 1 means it fails: each problem prints as `- problem → fix`, then `Next: fix the lines above and run this again.` Exit 2 means the input is unusable: no file, not UTF-8, broken JSON, or not an object. A broken JSON does not echo the raw input.
 
 ## Run
 
 ```
-python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/page-good.json
-python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/page-sitemap.json
-python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/page-two-offers.json
-python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/page-headline.json
-python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/page-headline-refused.json
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py --file ${CLAUDE_PLUGIN_ROOT}/examples/page-good.json
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py --file ${CLAUDE_PLUGIN_ROOT}/examples/page-sitemap.json
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py --file ${CLAUDE_PLUGIN_ROOT}/examples/page-two-offers.json
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py --file ${CLAUDE_PLUGIN_ROOT}/examples/page-headline.json
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py --file ${CLAUDE_PLUGIN_ROOT}/examples/page-headline-refused.json
 ```
 
-Add `--json` to get one JSON object with `pass`, `sitemap`, `problems`, and the fields that passed.
+Add `--json` to get one JSON object with `pass`, `sitemap`, `problems`, `fixes` (one per problem), `next`, and the fields that passed.
 
 Python 3 standard library only. No network. No publish.
 
@@ -88,11 +92,11 @@ Python 3 standard library only. No network. No publish.
 This is step 7 of the GTM operator suite (`/plugin marketplace add cmj-hub/gtm-operator-skills`).
 
 - **Reads:** `evp` and `pricing` from `brand-config.json`, if present.
-- **Writes:** nothing outside the draft. It never touches another pack's keys.
+- **Writes:** `gtm/page.json` only. It never touches another pack's keys.
 - **Before this:** evp (`/evp:evp`) when there is no offer line; pricing (`/pricing:pricing`) when the page sells a tier.
 - **After this:** email-sequence (`/email-sequence:lifecycle-email`) once someone opts in; geo (`/geo:geo`) when the page must be quoted by an answer engine.
 
-If a companion pack is not installed, name it and its install line (`/plugin install <name>@gtm-operator-skills`); do not do its job inline.
+When the page passes, end with `Next: /email-sequence:lifecycle-email` (or `/geo:geo` when the page must be quoted by an answer engine). If a companion pack is not installed, name it and its install line (`/plugin install <name>@gtm-operator-skills`); do not do its job inline.
 
 ## Example draft
 

@@ -10,7 +10,7 @@ before you contribute.
   one-line fixes.
 - **Scoring cases** — a draft the scorer passes that should fail, or
   fails that should pass. Add it as a test in `tests/test_score.py`.
-- **Wording** in `SKILL.md` that helps an agent write a tighter offer
+- **Wording** in `skills/page/SKILL.md` that helps an agent write a tighter offer
   or action.
 
 ## What doesn't land
@@ -37,7 +37,7 @@ python3 -m unittest discover -s tests
 - [ ] If you touch the scorer, add a test and paste the output for the
       three files in `examples/` in the PR
 - [ ] If you change what the scorer checks, update the table in
-      `SKILL.md` and the list in `README.md`
+      `skills/page/SKILL.md` and the list in `README.md`
 - [ ] `CHANGELOG.md` updated and `version` bumped in
       `.claude-plugin/plugin.json`
 - [ ] No new dependencies (pip packages or npm packages)

@@ -106,7 +106,8 @@ class ScorePage(unittest.TestCase):
     def test_json_output_on_pass(self):
         code, out = score(GOOD)
         self.assertEqual(code, 0)
-        self.assertEqual(out, {"pass": True, "sitemap": False, "problems": [], **GOOD})
+        self.assertEqual(out, {"pass": True, "sitemap": False, "problems": [], **GOOD,
+                               "fixes": [], "next": "/email-sequence:lifecycle-email"})
 
     def test_bad_json_hides_input(self):
         bad = run(["--stdin"], stdin='{"url": "' + CELL)
@@ -126,7 +127,8 @@ class ScorePage(unittest.TestCase):
         draft = json.loads((ROOT / "examples" / "page-headline.json").read_text())
         code, out = score(draft)
         self.assertEqual(code, 0)
-        self.assertEqual(out, {"pass": True, "sitemap": False, "problems": [], **draft})
+        self.assertEqual(out, {"pass": True, "sitemap": False, "problems": [], **draft,
+                               "fixes": [], "next": "/email-sequence:lifecycle-email"})
 
     def test_headline_refused_example_lists_each_problem(self):
         result = run(["--file", str(ROOT / "examples" / "page-headline-refused.json")])
@@ -188,6 +190,29 @@ class ScorePage(unittest.TestCase):
         result = run(["--file", str(ROOT / "examples" / "nope.json")])
         self.assertEqual(result.returncode, 2)
         self.assertIn("file not found", result.stderr)
+
+
+class CliConvention(unittest.TestCase):
+    def test_refusal_lines_say_what_to_change(self):
+        result = run(["--file", str(ROOT / "examples" / "page-headline-refused.json")])
+        lines = result.stdout.strip().splitlines()
+        self.assertEqual(lines[-1], "Next: fix the lines above and run this again.")
+        for line in lines[1:-1]:
+            self.assertRegex(line, r"^- .+ \u2192 .+")
+
+    def test_pass_names_next_step(self):
+        result = run(["--file", str(ROOT / "examples" / "page-good.json")])
+        self.assertEqual(result.stdout.strip().splitlines()[-1], "Next: /email-sequence:lifecycle-email")
+
+    def test_json_fixes_parallel_to_problems(self):
+        code, out = score({**GOOD, "url": "http://example.com/desk", "offer": "One. Two."})
+        self.assertEqual(code, 1)
+        self.assertEqual(len(out["fixes"]), len(out["problems"]))
+        self.assertIn("run this again", out["next"])
+
+    def test_help_and_input_alias(self):
+        self.assertIn("examples/page-good.json", run(["--help"]).stdout)
+        self.assertEqual(run(["--input", str(ROOT / "examples" / "page-good.json")]).returncode, 0)
 
 
 if __name__ == "__main__":
