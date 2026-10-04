@@ -2,7 +2,7 @@
   "name": "landing-page",
   "icon": ".claude-plugin/icon.png",
   "version": "0.3.0",
-  "description": "A landing page is one page, one offer, and one action.",
+  "description": "A landing page is one address. The page is a headline, one proof, one offer, and one action, in that order.",
   "author": {
     "name": "Jay Mount Consulting"
   },
