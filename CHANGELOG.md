@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 — 2026-10-04
+
+- Optional `headline`: one sentence, no URL, shares a word with the offer.
+- Optional `proof`: one non-empty line.
+- `SKILL.md` maps `evp.primary` to the headline and `evp.proof` to proof.
+- New examples: `page-headline.json` passes, `page-headline-refused.json` fails.
+- `SECURITY.md` and a README privacy section.
+
 ## 0.5.0 — 2026-10-04
 
 - `plugin.json` lists `"skills": ["./"]` so the root skill loads explicitly.

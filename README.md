@@ -70,6 +70,8 @@ Then drop in yours. Every problem is listed at once, so one pass shows every fix
 - `url` is one https address with a host. A list, two addresses, or a path that says sitemap fails.
 - `offer` is one sentence, 200 characters or less. A list or an `offers` key fails.
 - `action` is one sentence, 160 characters or less. A list, an `actions` key, or a `ctas` key fails.
+- `headline`, if present, is one sentence with no URL that shares a word with the offer. See `examples/page-headline.json`.
+- `proof`, if present, is one non-empty line.
 
 Exit 0 passes. Exit 1 fails. Exit 2 means the input is unusable.
 
@@ -105,6 +107,10 @@ No. It scores the draft. You publish it.
 Previous: [Sales offer](https://github.com/cmj-hub/claude-sales-offer)
 
 Next: [Generative engine optimization](https://github.com/cmj-hub/claude-geo)
+
+## Privacy and security
+
+The scorer is local Python 3 standard library. It reads only the draft JSON you pass it; the skill reads `brand-config.json` if present and writes nothing outside your draft. No script opens a network connection. No telemetry, no credentials, and nothing is published. See [SECURITY.md](SECURITY.md).
 
 ## License
 
