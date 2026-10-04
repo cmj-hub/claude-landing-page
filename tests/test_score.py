@@ -118,6 +118,72 @@ class ScorePage(unittest.TestCase):
         self.assertNotIn(CELL, array.stdout + array.stderr)
         self.assertIn("JSON must be an object", array.stderr)
 
+    def test_headline_example_passes(self):
+        result = run(["--file", str(ROOT / "examples" / "page-headline.json")])
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("headline: Find the week's leak before Monday's pipeline review.", result.stdout)
+        self.assertIn("proof: Built from the leaks", result.stdout)
+        draft = json.loads((ROOT / "examples" / "page-headline.json").read_text())
+        code, out = score(draft)
+        self.assertEqual(code, 0)
+        self.assertEqual(out, {"pass": True, "sitemap": False, "problems": [], **draft})
+
+    def test_headline_refused_example_lists_each_problem(self):
+        result = run(["--file", str(ROOT / "examples" / "page-headline-refused.json")])
+        self.assertEqual(result.returncode, 1)
+        for line in (
+            "- headline is more than one sentence",
+            "- headline holds a URL",
+            "- headline does not name the offer",
+            "- proof is empty",
+        ):
+            self.assertIn(line, result.stdout)
+
+    def test_headline_is_one_sentence(self):
+        code, out = score({**GOOD, "headline": "The week's leak. Named."})
+        self.assertEqual(code, 1)
+        self.assertEqual(out["problems"], ["headline is more than one sentence"])
+
+    def test_headline_has_no_url(self):
+        for headline in ("The week's leak at https://example.com/desk", "The week's leak at WWW.example.com"):
+            code, out = score({**GOOD, "headline": headline})
+            self.assertEqual(code, 1, headline)
+            self.assertEqual(out["problems"], ["headline holds a URL"], headline)
+
+    def test_headline_names_the_offer(self):
+        code, out = score({**GOOD, "headline": "Grow faster this quarter."})
+        self.assertEqual(code, 1)
+        self.assertEqual(out["problems"], ["headline does not name the offer"])
+        code, out = score({**GOOD, "headline": "Your DESK for Monday."})
+        self.assertEqual(code, 0, out)
+
+    def test_headline_list_or_blank_fails(self):
+        self.assertIn("more than one headline", score({**GOOD, "headline": ["a", "b"]})[1]["problems"])
+        self.assertIn("headline is missing", score({**GOOD, "headline": "  "})[1]["problems"])
+
+    def test_proof_is_one_nonempty_line(self):
+        for proof, problem in (
+            ("", "proof is empty"),
+            (["one", "two"], "proof is more than one line"),
+            ("Used by 40 teams.\nCut churn by 12%.", "proof is more than one line"),
+            ("x" * 201, "proof is longer than 200 characters"),
+        ):
+            code, out = score({**GOOD, "proof": proof})
+            self.assertEqual(code, 1, proof)
+            self.assertEqual(out["problems"], [problem], proof)
+        code, out = score({**GOOD, "proof": "Used by 40 teams. Cut churn by 12%."})
+        self.assertEqual(code, 0, out)
+
+    def test_null_optional_fields_are_ignored(self):
+        code, out = score({**GOOD, "headline": None, "proof": None})
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("headline", out)
+
+    def test_offers_list_refused(self):
+        code, out = score({**GOOD, "offers": [GOOD["offer"]]})
+        self.assertEqual(code, 1)
+        self.assertEqual(out["problems"], ["more than one offer"])
+
     def test_missing_file_exits_2(self):
         result = run(["--file", str(ROOT / "examples" / "nope.json")])
         self.assertEqual(result.returncode, 2)

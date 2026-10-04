@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Score a page: one URL, one offer, and one action. Refuse a sitemap.
 
+Optional: a one-sentence headline that names the offer and holds no URL,
+and a one-line proof.
+
 Stdlib only. No network. Does not publish.
 
   python3 scripts/score.py --file draft.json
@@ -23,11 +26,22 @@ from urllib.parse import urlsplit
 MAX_INPUT_BYTES = 2_000_000
 MAX_OFFER_CHARS = 200
 MAX_ACTION_CHARS = 160
+MAX_PROOF_CHARS = 200
 
 # Keys that mean the draft carries more than one of something.
 SITEMAP_KEYS = ("urls", "pages", "sitemap")
 EXTRA_OFFER_KEYS = ("offers", "offer_2", "second_offer")
 EXTRA_ACTION_KEYS = ("actions", "ctas", "action_2", "second_action")
+
+# A URL inside a headline: a scheme or a bare www. host.
+URL_IN_TEXT = re.compile(r"\bhttps?://|\bwww\.", re.IGNORECASE)
+
+# Short or generic words that do not show the headline names the offer.
+STOP = {
+    "that", "with", "this", "your", "from", "into", "over", "than", "then",
+    "them", "they", "have", "what", "when", "where", "will", "just", "only",
+    "read", "reply", "want", "next", "page", "names", "name",
+}
 
 # A sentence end followed by more text. "e.g." and decimals do not split.
 SENTENCE_BREAK = re.compile(r"(?<!\be\.g)(?<!\bi\.e)[.!?]+[\"')\]]*\s+(?=\S)")
@@ -139,21 +153,62 @@ def check_line(name: str, raw: object, extra: bool, limit: int) -> list[str]:
     return problems
 
 
+def content_words(text: str) -> set[str]:
+    """Words longer than three letters that are not in STOP."""
+    words = re.findall(r"[a-z0-9]+", text.lower().replace("'", "").replace("\u2019", ""))
+    return {word for word in words if len(word) > 3 and word not in STOP}
+
+
+def check_headline(raw: object, offer: object) -> list[str]:
+    """Optional. One sentence, no URL, and it shares a content word with the offer."""
+    problems = check_line("headline", raw, False, MAX_OFFER_CHARS)
+    text = nonempty_text(raw) if isinstance(raw, str) else ""
+    if not text:
+        return problems
+    if URL_IN_TEXT.search(text):
+        problems.append("headline holds a URL")
+    offer_words = content_words(nonempty_text(offer)) if isinstance(offer, str) else set()
+    if offer_words and not offer_words & content_words(text):
+        problems.append("headline does not name the offer")
+    return problems
+
+
+def check_proof(raw: object) -> list[str]:
+    """Optional. One non-empty line."""
+    if isinstance(raw, (list, dict)):
+        return ["proof is more than one line"]
+    if not isinstance(raw, str) or not raw.strip():
+        return ["proof is empty"]
+    if "\n" in raw.strip() or "\r" in raw.strip():
+        return ["proof is more than one line"]
+    if len(nonempty_text(raw)) > MAX_PROOF_CHARS:
+        return [f"proof is longer than {MAX_PROOF_CHARS} characters"]
+    return []
+
+
 def score(data: dict) -> dict:
     if is_sitemap(data):
         return {"pass": False, "sitemap": True, "problems": ["a sitemap"]}
-    problems = (
-        check_url(data.get("url"))
-        + check_line("offer", data.get("offer"), has_any(data, EXTRA_OFFER_KEYS), MAX_OFFER_CHARS)
+    has_headline = data.get("headline") is not None
+    has_proof = data.get("proof") is not None
+    problems = check_url(data.get("url"))
+    if has_headline:
+        problems += check_headline(data.get("headline"), data.get("offer"))
+    if has_proof:
+        problems += check_proof(data.get("proof"))
+    problems += (
+        check_line("offer", data.get("offer"), has_any(data, EXTRA_OFFER_KEYS), MAX_OFFER_CHARS)
         + check_line("action", data.get("action"), has_any(data, EXTRA_ACTION_KEYS), MAX_ACTION_CHARS)
     )
     result = {"pass": not problems, "sitemap": False, "problems": problems}
     if not problems:
-        result.update(
-            url=nonempty_text(data["url"]),
-            offer=nonempty_text(data["offer"]),
-            action=nonempty_text(data["action"]),
-        )
+        result["url"] = nonempty_text(data["url"])
+        if has_headline:
+            result["headline"] = nonempty_text(data["headline"])
+        if has_proof:
+            result["proof"] = nonempty_text(data["proof"])
+        result["offer"] = nonempty_text(data["offer"])
+        result["action"] = nonempty_text(data["action"])
     return result
 
 
@@ -180,8 +235,9 @@ def main() -> int:
         for problem in result["problems"]:
             print(f"- {problem}")
     else:
-        print(f"url: {result['url']}")
-        print(f"offer: {result['offer']}")
+        for key in ("url", "headline", "proof", "offer"):
+            if key in result:
+                print(f"{key}: {result[key]}")
         print(f"action: {result['action']}")
     return 0 if result["pass"] else 1
 
