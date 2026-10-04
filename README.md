@@ -6,6 +6,23 @@
 
 A landing page is one page, one offer, and one action.
 
+## In 60 seconds
+
+```text
+/plugin marketplace add cmj-hub/gtm-operator-skills
+/plugin install landing-page@gtm-operator-skills
+/landing-page:page
+```
+
+Or score the sample without an agent:
+
+```bash
+python3 scripts/score.py --file examples/page-good.json      # exit 0, prints url, offer, action, then "Next: /email-sequence:lifecycle-email"
+python3 scripts/score.py --file examples/page-sitemap.json   # exit 1: - a sitemap → keep one https address; each other page gets its own draft
+```
+
+Part of the GTM operator suite — `/plugin install gtm@gtm-operator-skills` installs all ten.
+
 The sample is a one-page desk that names the week's leak.
 
 The good draft passes. A sitemap fails the score.
@@ -18,14 +35,7 @@ The build guide teaches a human. The pack teaches an agent.
 
 ## Install
 
-In Claude Code, install it from the suite marketplace:
-
-```
-/plugin marketplace add cmj-hub/gtm-operator-skills
-/plugin install landing-page@gtm-operator-skills
-```
-
-The plugin is `landing-page`. Its one skill is `page`, so the command is `/landing-page:page`.
+In Claude Code, install it from the suite marketplace (the two lines above). The plugin is `landing-page`. Its one skill is `page` (in `skills/page/`), so the command is `/landing-page:page`. `/landing-page:page score` scores the draft you already have in `gtm/page.json`.
 
 Other agents (Codex, Cursor, and the rest) can install it with the skills CLI:
 
@@ -35,7 +45,7 @@ npx skills add cmj-hub/claude-landing-page --all -g --full-depth
 
 Or clone the repository and open the tree on the host you already run.
 
-The scorer is Python in this repo. The skill calls it from its own folder, so it runs wherever the pack lands.
+The scorer is Python in this repo. The skill calls it through `${CLAUDE_PLUGIN_ROOT}`, so it runs wherever the pack lands.
 
 Run the tests:
 
@@ -60,10 +70,11 @@ The good draft exits 0 and prints the URL, the offer, and the action. The sitema
 
 ```
 draft fails
-- offer is more than one sentence
+- offer is more than one sentence → cut it to one sentence
+Next: fix the lines above and run this again.
 ```
 
-Then drop in yours. Every problem is listed at once, so one pass shows every fix. Add `--json` for machine-readable output.
+Then drop in yours at `gtm/page.json`. Every problem is listed at once, each with what to change, so one pass shows every fix. Add `--json` for one JSON object (`pass`, `problems`, `fixes`, `next`).
 
 ## What the score checks
 
@@ -110,7 +121,7 @@ Next: [Generative engine optimization](https://github.com/cmj-hub/claude-geo)
 
 ## Privacy and security
 
-The scorer is local Python 3 standard library. It reads only the draft JSON you pass it; the skill reads `brand-config.json` if present and writes nothing outside your draft. No script opens a network connection. No telemetry, no credentials, and nothing is published. See [SECURITY.md](SECURITY.md).
+The scorer is local Python 3 standard library. It reads only the draft JSON you pass it; the skill reads `brand-config.json` if present and writes nothing outside your draft, `gtm/page.json`. No script opens a network connection. No telemetry, no credentials, and nothing is published. See [SECURITY.md](SECURITY.md).
 
 ## License
 

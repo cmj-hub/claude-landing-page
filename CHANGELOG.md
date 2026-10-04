@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0 — 2026-10-04
+
+- The draft lives at `gtm/page.json` (the suite's shared work folder), not `draft.json`.
+- Scorer: every failing line reads `- problem → fix`; the last line names the next step (`Next: /email-sequence:lifecycle-email` on a pass). `--json` adds `fixes` (parallel to `problems`) and `next`. `--input` is a hidden alias for `--file`. `--help` shows an example.
+- `/landing-page:page score` scores the existing draft; `argument-hint` says so.
+- README "In 60 seconds" block. Trigger evals under `evals/` and a manual `evals.yml` workflow.
+- `plugin.json` drops the `skills` key; default discovery finds `skills/page/`.
+
+### Moved
+
+- `SKILL.md` → `skills/page/SKILL.md`. The skill calls `${CLAUDE_PLUGIN_ROOT}/scripts/score.py`; `scripts/` and `examples/` stay at the repo root.
+- `draft.json` → `gtm/page.json`.
+
 ## 0.6.0 — 2026-10-04
 
 - Optional `headline`: one sentence, no URL, shares a word with the offer.

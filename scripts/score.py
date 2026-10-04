@@ -6,9 +6,12 @@ and a one-line proof.
 
 Stdlib only. No network. Does not publish.
 
-  python3 scripts/score.py --file draft.json
+  python3 scripts/score.py --file gtm/page.json
   python3 scripts/score.py --stdin
-  python3 scripts/score.py --file draft.json --json
+  python3 scripts/score.py --file gtm/page.json --json
+
+Each failing line reads `- <what is wrong> -> <what to change>`; the last line
+names the next step.
 
 Exit codes: 0 the page passes, 1 the page fails, 2 the input is unusable.
 """
@@ -45,6 +48,43 @@ STOP = {
 
 # A sentence end followed by more text. "e.g." and decimals do not split.
 SENTENCE_BREAK = re.compile(r"(?<!\be\.g)(?<!\bi\.e)[.!?]+[\"')\]]*\s+(?=\S)")
+
+
+NEXT_PASS = "/email-sequence:lifecycle-email"
+NEXT_FAIL = "fix the lines above and run this again."
+EXAMPLE = "example:\n  python3 scripts/score.py --file examples/page-good.json"
+
+
+def fix_for(problem: str) -> str:
+    """What to change for one problem line. Plain words, no input echoed."""
+    if problem == "a sitemap":
+        return "keep one https address; each other page gets its own draft"
+    if problem == "url is missing":
+        return "write the page's address as https://host/path"
+    if problem == "url holds more than one address":
+        return "keep one address"
+    if problem in ("url is not https", "url has no host"):
+        return "write it as https://host/path"
+    if problem == "headline holds a URL":
+        return "move the address to url"
+    if problem == "headline does not name the offer":
+        return "put the offer's noun or result in the headline"
+    if problem == "proof is empty":
+        return "write one real result, or drop proof"
+    if problem == "proof is more than one line":
+        return "cut it to one line"
+    match = re.match(r"more than one (\w+)$", problem)
+    if match:
+        return f"keep one {match.group(1)}; move the other to its own page"
+    match = re.match(r"(\w+) is missing$", problem)
+    if match:
+        return f"write one {match.group(1)} sentence"
+    if problem.endswith("is more than one sentence"):
+        return "cut it to one sentence"
+    match = re.search(r"longer than (\d+) characters$", problem)
+    if match:
+        return f"cut it to {match.group(1)} characters or fewer"
+    return "fix this field"
 
 
 def fail_input(message: str) -> None:
@@ -214,31 +254,38 @@ def score(data: dict) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Score a page draft: one https URL, one offer, one action. Refuses a sitemap."
+        description="Score a page draft: one https URL, one offer, one action. Refuses a sitemap.",
+        epilog=EXAMPLE,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--file", help="Path to a JSON object")
+    parser.add_argument("--file", help="Path to a JSON object (gtm/page.json)")
+    parser.add_argument("--input", dest="file", help=argparse.SUPPRESS)
     parser.add_argument("--stdin", action="store_true", help="Read a JSON object from stdin")
     parser.add_argument("--json", action="store_true", help="Print the result as one JSON object")
     args = parser.parse_args()
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")
     data = load_payload(args)
     if not isinstance(data, dict):
         fail_input("JSON must be an object")
 
     result = score(data)
+    result["fixes"] = [fix_for(problem) for problem in result["problems"]]
+    result["next"] = NEXT_PASS if result["pass"] else NEXT_FAIL
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False))
-    elif result["sitemap"]:
-        print("a sitemap")
     elif not result["pass"]:
-        print("draft fails")
-        for problem in result["problems"]:
-            print(f"- {problem}")
+        print("a sitemap" if result["sitemap"] else "draft fails")
+        for problem, fix in zip(result["problems"], result["fixes"]):
+            print(f"- {problem} → {fix}")
+        print(f"Next: {NEXT_FAIL}")
     else:
         for key in ("url", "headline", "proof", "offer"):
             if key in result:
                 print(f"{key}: {result[key]}")
         print(f"action: {result['action']}")
+        print(f"Next: {NEXT_PASS}")
     return 0 if result["pass"] else 1
 
 
