@@ -23,6 +23,8 @@ python3 scripts/score.py --file examples/page-sitemap.json   # exit 1: - a sitem
 
 Part of the GTM operator suite — `/plugin install gtm@gtm-operator-skills` installs all ten.
 
+Add the [gtm-operator mod](https://github.com/cmj-hub/gtm-operator-claude-mod) to see the suite's next step above your prompt and keep `brand-config.json` from being overwritten: `/plugin install gtm-operator@gtm-operator-skills`.
+
 The sample is a one-page desk that names the week's leak.
 
 The good draft passes. A sitemap fails the score.
