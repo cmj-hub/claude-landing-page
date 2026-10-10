@@ -92,6 +92,12 @@ Exit 0 passes. Exit 1 fails. Exit 2 means the input is unusable.
 
 It will not publish the page. It does not emit a sitemap. It will not list every URL on the site.
 
+## The data step this pack leaves to you
+
+This pack scores one page: one URL, one offer, one action. Company facts for the draft sit outside the pack.
+
+Run [Company research](https://thegtmdirectory.com/jobs/company-research) on The Growth Desk when you need the public facts that fill the page.
+
 ## What belongs on a landing page?
 
 One page, one offer, and one action. A second offer, a second action, or a list of every URL on the site fails the score.
