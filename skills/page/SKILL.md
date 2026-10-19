@@ -4,7 +4,7 @@ description: "Draft one landing page as one https URL, one offer, and one action
 when_to_use: "Trigger on: landing page, one-page offer, squeeze page, sign-up page, page with one CTA, score my landing page draft. Do not use for a site map, site navigation, a multi-page site, or publishing."
 argument-hint: "[what the page offers | score]"
 license: MIT
-allowed-tools: Read Write Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py:*)
+allowed-tools: Read Write(./gtm/**) Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/score.py:*)
 models: ""
 ---
 
