@@ -1,0 +1,39 @@
+{
+  "name": "@jmc-gtm/claude-landing-page",
+  "version": "0.7.0",
+  "description": "Draft one landing page as one URL, one offer, and one action, then score it. Use when someone asks for a landing page or a single-offer page. Refuses a sitemap.",
+  "license": "MIT",
+  "author": "JMC Go-to-Market Systems",
+  "homepage": "https://github.com/cmj-hub/claude-landing-page#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmj-hub/claude-landing-page.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cmj-hub/claude-landing-page/issues"
+  },
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "claude-plugin",
+    "landing-page",
+    "offer",
+    "cta",
+    "conversion",
+    "marketing",
+    "gtm"
+  ],
+  "files": [
+    ".claude-plugin",
+    "skills",
+    "scripts",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
