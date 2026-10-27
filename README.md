@@ -55,6 +55,23 @@ Run the tests:
 python3 -m unittest discover -s tests
 ```
 
+### From npm
+
+The same pack is on npm as [`@jmc-gtm/claude-landing-page`](https://www.npmjs.com/package/@jmc-gtm/claude-landing-page), released from this repo's version tags with npm provenance. It has no dependencies and no install scripts.
+
+In a project, for any agent host the skills installer knows (`experimental_sync` is still marked experimental there):
+
+```bash
+npm install -D @jmc-gtm/claude-landing-page
+npx skills experimental_sync -a claude-code -y
+```
+
+In your own Claude Code plugin marketplace, point an entry at the package:
+
+```json
+{ "name": "landing-page", "source": { "source": "npm", "package": "@jmc-gtm/claude-landing-page" } }
+```
+
 ## What you walk out with in 15 minutes
 
 Artifact: `examples/page-good.json`.
